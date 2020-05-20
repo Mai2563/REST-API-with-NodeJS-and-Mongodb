@@ -24,6 +24,18 @@ module.exports = {
 				reject(new Error('Player ' + id + 'not found'))
 			})
 		})
+	},
+
+	post: (params) => {
+		return new Promise((resolve, reject) => {
+			Player.create(params)
+			.then(data => {
+				resolve(data)
+			})
+			.catch(err => {
+				reject(err)
+			})
+		})
 	}
 
 }
