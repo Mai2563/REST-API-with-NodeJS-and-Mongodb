@@ -1,8 +1,5 @@
 // Full Documentation - https://docs.turbo360.co
 const vertex = require('vertex360')({site_id: process.env.TURBO_APP_ID})
-const express = require('express')
-
-const app = express() // initialize app
 
 /*  
 	Apps can also be initialized with config options as shown in the commented out example below. Options
@@ -14,15 +11,20 @@ const config = {
 	static: 'public', 							// Set static assets directory
 	logging: true,
 	// controllers: require('./controllers'), 	// only for CMS integration
-	db: vertex.nedb()
+	db: { 					// Database configuration. Remember to set env variables in .env file: MONGODB_URI, PROD_MONGODB_URI
+		url: (process.env.TURBO_ENV == 'dev') ? process.env.MONGODB_URI : process.env.PROD_MONGODB_URI,
+		// url: 'mongodb://localhost/footballdb',
+		type: 'mongo',
+		onError: (err) => {
+			console.log('DB Connection Failed!')
+		},
+		onSuccess: () => {
+			console.log('FOOTBALL DB CONNECTED!')
+		}
+	}
 }
 
-vertex.configureApp(app, config) // remove line 30 below and replace with this
-
-
-vertex.configureApp(app)
-app.use(vertex.setContext(process.env))
-
+const app = vertex.app(config)
 
 // import routes
 const index = require('./routes/index')
