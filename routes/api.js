@@ -3,7 +3,7 @@ const express = require('express')
 const router = express.Router()
 const controllers = require('../controllers')
 
-//GET, POST, PUT, DELETE
+//GET
 
 router.get('/:resource',(req , res) => {
 	const resource = req.params.resource
@@ -91,6 +91,7 @@ router.post('/:resource', (req, res) => {
 
 })
 
+//PUT
 router.put('/:resource/:id', (req, res) => {
 	const resource = req.params.resource
 	const controller = controllers[resource]
@@ -104,6 +105,34 @@ router.put('/:resource/:id', (req, res) => {
 	}
 
 	controller.put(req.params.id, req.body)
+	.then(data => {
+		res.json({
+			confirmation: 'success',
+			data: data
+		})
+	})
+	.catch(err => {
+		res.json({
+			confirmation: 'fail',
+			message: err.message
+		})
+	})
+})
+
+//DELETE
+router.delete('/:resource/:id', (req, res) => {
+	const resource = req.params.resource
+	const controller = controllers[resource]
+	if (controller == null){
+		res.json({
+			confirmation: 'fail',
+			message: 'Invalid Resource'
+		})
+
+		return
+	}
+
+	controller.delete(req.params.id)
 	.then(data => {
 		res.json({
 			confirmation: 'success',
